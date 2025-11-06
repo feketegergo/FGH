@@ -37,5 +37,4 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
     ggplot2::scale_fill_identity() +
     ggplot2::theme_minimal()
 }
-
 }

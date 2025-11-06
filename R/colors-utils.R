@@ -1,5 +1,9 @@
 # R/colors-utils.R
 
+#' @importFrom rlang .data
+#' @importFrom rlang ":="
+NULL
+
 #' N jól elkülönülő alapszín és hozzájuk tartozó komplementer színpár generálása
 #'
 #' HSL kör mentén generál \code{n} darab színt (hex formátumban), valamint
@@ -8,7 +12,6 @@
 #' \code{scale_*_identity()} skálákkal közvetlenül lehet dolgozni.
 #'
 #' @param n Egész szám, a kért színpárok száma.
-#'
 #' @return Tibble két karakteroszloppal: \code{color}, \code{color2}.
 #'
 #' @examples
@@ -23,26 +26,26 @@
 #'     ggplot2::scale_fill_identity() +
 #'     ggplot2::theme_minimal()
 #' }
-#'
 #' @importFrom tibble tibble
-#' @importFrom dplyr mutate select
+#' @importFrom dplyr mutate select all_of
 #' @importFrom grDevices hsv
 #' @export
 create_color_palette_for_N <- function(n) {
     stopifnot(length(n) == 1L, is.numeric(n), n >= 1)
 
-    # fényesség/érték és telítettség variációk
     va <- c(0.33, 0.66, 1.00)
     vs <- c(0.5, 1, 1, 1, 1, 1)
 
     tibble::tibble(x = 0:(n - 1)) |>
         dplyr::mutate(
-            color  = grDevices::hsv(h = x / (n + 1), s = vs[(x %% 6) + 1], v = va[(x %% 3) + 1]),
-            color2 = grDevices::hsv(h = (0.5 + x / (n + 1)) %% 1, s = 1, v = 1)
+            color  = grDevices::hsv(h = .data$x / (n + 1),
+                                    s = vs[(.data$x %% 6) + 1],
+                                    v = va[(.data$x %% 3) + 1]),
+            color2 = grDevices::hsv(h = (0.5 + .data$x / (n + 1)) %% 1,
+                                    s = 1, v = 1)
         ) |>
-        dplyr::select(-x)
+        dplyr::select(-dplyr::all_of("x"))
 }
-
 
 #' Színek hozzárendelése egy tábla egy választott oszlopának kategóriáihoz
 #'
@@ -58,7 +61,6 @@ create_color_palette_for_N <- function(n) {
 #'
 #' @param nodes_tbl data.frame / tibble.
 #' @param colname Oszlopnév (tidy-eval: névként vagy stringként is megadható).
-#'
 #' @return Az eredeti tábla két új karakteroszloppal.
 #'
 #' @examples
@@ -73,7 +75,6 @@ create_color_palette_for_N <- function(n) {
 #'     ggplot2::scale_fill_identity() +
 #'     ggplot2::theme_minimal()
 #' }
-#'
 #' @importFrom rlang ensym as_name
 #' @importFrom dplyr distinct rename left_join join_by
 #' @export
@@ -83,27 +84,24 @@ add_colors_for_a_column <- function(nodes_tbl, colname) {
 
     stopifnot(col_chr %in% names(nodes_tbl))
 
-    # Egyedi kategóriák
     tmp <- dplyr::distinct(nodes_tbl, !!col_sym)
 
-    # Paletta hozzárendelése
-    tmp <- dplyr::left_join(
+    tmp <- dplyr::bind_cols(
         tmp,
-        create_color_palette_for_N(n = nrow(tmp)),
-        by = character()
+        create_color_palette_for_N(n = nrow(tmp))
     )
 
-    # Programozott átnevezés
     tmp <- dplyr::rename(
         tmp,
         !!paste0("color_of_", col_chr) := .data$color,
         !!paste0("complementer_color_of_", col_chr) := .data$color2
     )
 
-    # Visszacsatolás az eredeti táblához
-    dplyr::left_join(
+    tmp <- dplyr::left_join(
         nodes_tbl,
         tmp,
         by = dplyr::join_by(!!col_sym)
     )
+
+    return(tmp)
 }
