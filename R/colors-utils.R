@@ -93,8 +93,8 @@ add_colors_for_a_column <- function(nodes_tbl, colname) {
 
     tmp <- dplyr::rename(
         tmp,
-        !!paste0("color_of_", col_chr) := .data$color,
-        !!paste0("complementer_color_of_", col_chr) := .data$color2
+        !!paste0("color_of_", col_chr) := color,
+        !!paste0("complementer_color_of_", col_chr) := color2
     )
 
     tmp <- dplyr::left_join(

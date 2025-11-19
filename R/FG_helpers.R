@@ -75,11 +75,12 @@ add_significance_stars <- function(data, p_col, new_col = "sig_label") {
 #' @param x karaktervektor.
 #' @return Látható kimenet a konzolra (\code{cat}), visszatérési értéke \code{NULL}.
 #' @examples
-#' # print_as_string_list(c("alma", "korte", "szilva"))
+#' # print_as_string_vector(c("alma", "korte", "szilva"))
 #' @export
-print_as_string_list <- function(x) {
+print_as_string_vector <- function(x) {
     str <- sprintf("\"%s\"", x) |>
         base::paste(collapse = ", ")
+    str<- base::paste0("c(",str,")")
     base::cat(str)
 }
 
