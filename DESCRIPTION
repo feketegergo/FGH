@@ -12,7 +12,8 @@ BugReports: https://github.com/feketegergo/FGH/issues
 Imports:
     tibble,
     dplyr,
-    rlang
+    rlang,
+    httr2
 Suggests:
     ggplot2,
     testthat (>= 3.0.0)
