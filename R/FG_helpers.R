@@ -54,14 +54,15 @@ mean_if_enough <- function(x, min_n = 5, na.rm = TRUE) {
 add_significance_stars <- function(data, p_col, new_col = "sig_label") {
     p_col <- rlang::enquo(p_col)
 
+    # a csillag és a pont karakterek megadására UTF8 kódokat használok, mert az jobb csillag
     dplyr::mutate(
         .data = data,
         # Név szerinti oszlop-hozzárendelés tidy-eval-lel:
         !!rlang::sym(new_col) := dplyr::case_when(
-            !!p_col < 0.001 ~ "***",
-            !!p_col < 0.01  ~ "**",
-            !!p_col < 0.05  ~ "*",
-            !!p_col < 0.10  ~ ".",
+            !!p_col < 0.001 ~ "\u2217\u2217\u2217",  #***
+            !!p_col < 0.01  ~ "\u2217\u2217",        #**
+            !!p_col < 0.05  ~ "\u2217",              #*
+            !!p_col < 0.10  ~ "\u00B7",              #.
             TRUE            ~ " "
         )
     )

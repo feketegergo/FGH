@@ -5,12 +5,12 @@ test_that("add_significance_stars adds correct star labels", {
     expect_true("stars" %in% names(out))
     expect_equal(
         out$stars,
-        c(" ", "*", "**", "***")
+        c(" ", "\u2217","\u2217\u2217", "\u2217\u2217\u2217")
     )
 })
 
 test_that("add_significance_stars works with different column names", {
     df <- data.frame(p_value = c(0.2, 0.04))
     out <- add_significance_stars(df, p_value, new_col = "sig")
-    expect_equal(out$sig, c(" ", "*"))
+    expect_equal(out$sig, c(" ", "\u2217"))
 })
