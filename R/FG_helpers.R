@@ -62,7 +62,7 @@ add_significance_stars <- function(data, p_col, new_col = "sig_label") {
             !!p_col < 0.001 ~ "\u2217\u2217\u2217",  #***
             !!p_col < 0.01  ~ "\u2217\u2217",        #**
             !!p_col < 0.05  ~ "\u2217",              #*
-            !!p_col < 0.10  ~ "\u00B7",              #.
+            !!p_col < 0.10  ~ "\u22C5",              #.
             TRUE            ~ " "
         )
     )
