@@ -1,13 +1,4 @@
 
-#' @param x numeric vektor.
-#' @param min_n integer, a minimálisan elvárt elemszám (alapértelmezés: 5).
-#' @param na.rm logical, a hiányzó értékek eltávolítása számítás előtt (TRUE).
-#' @return Szám (\code{numeric(1)}), vagy \code{NA_real_}, ha kevés az adat.
-#' @examples
-#' sd_if_enough(c(1, 2, NA, 3), min_n = 3)
-#' @export
-
-
 #'
 #' Abból kiindulva, hogy normális eloszású a minta, kiszámolja hogy ennyi
 #' mintaelemszám esetén hol lenne aa  olyan kétoldali határ, amelyen kívül egy
@@ -20,7 +11,7 @@
 #'  @param conf numeric vektor.
 #'  @return thr 2 elemű vektorban egy intervallummal. Az első érték kell a kisebb
 #'
-#' @examples
+#' Példa:
 #' dat |>  mutate(burden=winsorize(burden, outlier_threshold_at_normal_sample(burden,0.99)))
 #' @export
 outlier_threshold_at_normal_sample <- function(x, conf = 0.95) {
@@ -44,7 +35,7 @@ outlier_threshold_at_normal_sample <- function(x, conf = 0.95) {
 #'
 #' @return x-hez hasonló numerikus vektor, csak a szélsőséges értékek le vannak cserélva
 #'
-#' @examples
+#' Példa:
 #' dat |>  mutate(burden=winsorize(burden, outlier_threshold_at_normal_sample(burden,0.99)))
 #' @export
 winsorize<-function(x, thr)
