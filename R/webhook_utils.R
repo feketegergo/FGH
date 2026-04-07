@@ -64,3 +64,91 @@ send_webhook_message <- function(msg = "automatic message",
 
     ok
 }
+
+
+#' Generate a funny memorable name from a process ID
+#'
+#' Deterministically generates a three-part funny name from a process ID
+#' (`pid`), in the form of:
+#' property + color + animal.
+#'
+#' If `pid` is not provided, the function uses the current R process ID
+#' returned by [Sys.getpid()].
+#'
+#' Supported languages:
+#' \itemize{
+#'   \item `"hu"`: Hungarian
+#'   \item `"en"`: English
+#' }
+#'
+#' The same `pid` and `lang` combination always produces the same result.
+#'
+#' @param pid Integer-like process ID. If omitted, the current process ID is
+#'   used via [Sys.getpid()].
+#' @param lang Output language. Either `"hu"` or `"en"`. Default is `"hu"`.
+#'
+#' @return A character scalar containing a three-word memorable name.
+#'
+#' @examples
+#' pid_funny_name()
+#' pid_funny_name(1234)
+#' pid_funny_name(1234, "en")
+#'
+#' @export
+pid_funny_name <- function(pid = Sys.getpid(), lang = "hu") {
+    lang <- match.arg(lang, c("hu", "en"))
+
+    if (length(pid) != 1 || is.na(pid)) {
+        stop("`pid` must be a single non-missing value.", call. = FALSE)
+    }
+
+    pid_num <- suppressWarnings(as.integer(pid))
+    if (is.na(pid_num)) {
+        stop("`pid` must be coercible to integer.", call. = FALSE)
+    }
+
+    pid_num <- abs(pid_num)
+
+    words <- list(
+        hu = list(
+            trait = c(
+                "kicsi", "nagy", "hosszú", "fürge", "lomha", "bátor",
+                "vidám", "morgós", "csíkos", "bolyhos", "kövér", "csendes",
+                "zajos", "ravasz", "álmos", "ugráló"
+            ),
+            color = c(
+                "sárga", "piros", "kék", "zöld", "lila", "narancs",
+                "fekete", "fehér", "szürke", "barna", "arany", "ezüst"
+            ),
+            animal = c(
+                "fóka", "kutya", "macska", "rozmár", "pingvin", "teve",
+                "vidra", "hörcsög", "panda", "zsiráf", "mosómedve", "bagoly",
+                "lajhár", "vakond", "pelikán", "borz"
+            )
+        ),
+        en = list(
+            trait = c(
+                "tiny", "big", "long", "swift", "sleepy", "brave",
+                "cheerful", "grumpy", "striped", "fluffy", "chubby", "silent",
+                "noisy", "sly", "dreamy", "bouncy"
+            ),
+            color = c(
+                "yellow", "red", "blue", "green", "purple", "orange",
+                "black", "white", "gray", "brown", "golden", "silver"
+            ),
+            animal = c(
+                "seal", "dog", "cat", "walrus", "penguin", "camel",
+                "otter", "hamster", "panda", "giraffe", "raccoon", "owl",
+                "sloth", "mole", "pelican", "badger"
+            )
+        )
+    )
+
+    w <- words[[lang]]
+
+    i_trait  <- (pid_num %% length(w$trait)) + 1L
+    i_color  <- ((pid_num * 7L + 3L) %% length(w$color)) + 1L
+    i_animal <- ((pid_num * 11L + 5L) %% length(w$animal)) + 1L
+
+    paste(w$trait[i_trait], w$color[i_color], w$animal[i_animal])
+}
